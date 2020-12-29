@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<style>
+			.button {
+				background-color: #05C46B;
+				border: none;
+				border-radius: 5px;
+				color: white;
+				padding: 15px 32px;
+				text-align: center;
+				text-decoration: none;
+				display: inline-block;
+				font-size: 16px;
+			}
+			.inner {
+				font-family: 'Barlow';
+				border: 1px solid #A4A4A4;
+				border-radius: 5px;
+				display: block;
+				margin-bottom: 25px;
+			}
+		</style>
+		<meta charset="utf-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+		<title>Keycloak - OIDC Authentication</title>
+		<meta name="description" content=""/>
+		<meta name="viewport" content="width=device-width"/>
+		<base href="/"/>
+		<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/css/bootstrap.min.css"/>
+		<link href='https://fonts.googleapis.com/css?family=Barlow' rel='stylesheet'>
+		<script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
+		<script type="text/javascript" src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="/webjars/js-cookie/js.cookie.js"></script>
+	</head>
+	<body>
+		<section class="banner full">
+			<article>
+				<div class="inner" style="text-align: center;">
+					<header>
+						<img src="https://www.grootan.com/img/logo.png" alt="Keycloak - OIDC" width="140" height="100" />
+						<h3><b>Keycloak - OIDC</b></h3>
+						<br>
+						<h4>Java - Authorization flow authentication</h4>
+					</header>
+				</div>
+			</article>
+		</section>
+		<div class="container unauthenticated" style="text-align: center;font-family:'Barlow'">
+			<button class="button" onclick="window.location.href = '/login';"><b>Login</b></button>
+		</div>
+		<div class="container authenticated" style="display:none;text-align: center;font-family:'Barlow'">
+			<h4>Logged in as: <span id="user"></span></h4>
+			<div>
+				<button onClick="logout()" class="button"><b>Logout</b></button>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript">
+		$.get("/user", function(data) {
+			$("#user").html(data.userAuthentication.details.name);
+			$(".unauthenticated").hide()
+			$(".authenticated").show()
+		});
+		var logout = function() {
+			$.post("/logout", function() {
+				$("#user").html('');
+				$(".unauthenticated").show();
+				$(".authenticated").hide();
+			})
+			return true;
+		}
+		$.ajaxSetup({
+			beforeSend : function(xhr, settings) {
+				if (settings.type == 'POST' || settings.type == 'PUT'
+						|| settings.type == 'DELETE') {
+					if (!(/^http:.*/.test(settings.url) || /^https:.*/
+							.test(settings.url))) {
+						xhr.setRequestHeader("X-XSRF-TOKEN",
+								Cookies.get('XSRF-TOKEN'));
+					}
+				}
+			}
+		});
+	</script>
+</html>

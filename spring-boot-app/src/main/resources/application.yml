@@ -1,0 +1,13 @@
+security:
+  oauth2:
+    client:
+      clientId: keycloak-client-id
+      clientSecret: keycloak-client-secret
+      accessTokenUri: <TOKEN_URL>
+      userAuthorizationUri: <AUTHORIZATION_URL>
+      authorizedGrantTypes: authorization_code
+      scope: openid,profile,email
+    resource:
+      userInfoUri: <USERINFO_URL>
+server:
+  port : 8082
